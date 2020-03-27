@@ -16,8 +16,8 @@ AND = 0b10101000  # And
 NOT = 0b01101001  # Not
 OR  = 0b10101010  # Or
 XOR = 0b10101011  # Xor
-SHL = 0b10101100  #
-SHR = 0b10101101  #
+SHL = 0b10101100  # Bitwise Shift left
+SHR = 0b10101101  # Bitwise Shift right
 INC = 0b01100101  # Increment
 DEC = 0b01100110  # Decrement
 CMP = 0b10100111  # Compare - set flag is equal
@@ -58,22 +58,47 @@ class CPU:
 
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
+
         elif op == "SUB":
             self.reg[reg_a] -= self.reg[reg_b]
+
         elif op == "MUL":
             self.reg[reg_a] *= self.reg[reg_b]
+
         elif op == "DIV":
             self.reg[reg_a] /= self.reg[reg_b]
+
+        elif op == "AND":
+            pass
+
+        elif op == "OR":
+            pass
+
+        elif op == "XOR":
+            pass
+
+        elif op == "NOT":
+            pass
+
+        elif op == "SHR":
+            pass
+
+        elif op == "SHL":
+            pass
+
         elif op == "JMP":
             self.pc = self.reg[reg_a]
+
         elif op == "CMP":
             if self.reg[reg_a] == self.reg[reg_b]:
                 self.equal_flag = True
+
         elif op == "JNE":
             if self.equal_flag is not True:
                 self.pc = self.reg[reg_a]
             else:
                 self.pc += 2
+
         elif op == "JEQ":
             if self.equal_flag is True:
                 self.pc = self.reg[reg_a]
@@ -152,3 +177,31 @@ class CPU:
 
             elif command == JEQ:
                 self.alu("JEQ", self.ram[self.pc + 1], None)
+
+            elif command == AND:
+                self.alu("AND", self.ram[self.pc + 1], self.ram[self.pc + 2])
+                self.pc += 3
+
+            elif command == OR:
+                self.alu("OR", self.ram[self.pc + 1], self.ram[self.pc + 2])
+                self.pc += 3
+
+            elif command == XOR:
+                self.alu("XOR", self.ram[self.pc + 1], self.ram[self.pc + 2])
+                self.pc += 3
+
+            elif command == SHR:
+                self.alu("SHR", self.ram[self.pc + 1], self.ram[self.pc + 2])
+                self.pc += 3
+
+            elif command == SHL:
+                self.alu("SHL", self.ram[self.pc + 1], self.ram[self.pc + 2])
+                self.pc += 3
+
+            elif command == MOD:
+                self.alu("MOD", self.ram[self.pc + 1], self.ram[self.pc + 2])
+                self.pc += 3
+
+            elif command == NOT:
+                self.alu("NOT", self.ram[self.pc + 1], self.ram[self.pc + 2])
+                self.pc += 3
