@@ -14,7 +14,7 @@ SUB = 0b10100001  # Subtract
 ADD = 0b10100000  # Add
 AND = 0b10101000  # And
 NOT = 0b01101001  # Not
-OR  = 0b10101010  # Or
+OR = 0b10101010  # Or
 XOR = 0b10101011  # Xor
 SHL = 0b10101100  # Bitwise Shift left
 SHR = 0b10101101  # Bitwise Shift right
@@ -72,12 +72,15 @@ class CPU:
         elif op == "DIV":
             value_1 /= value_2
 
+        elif op == "MOD":
+            self.reg[op_1] = value_1%value_2
+
         elif op == "AND":
             value_1_binary = format(value_1, '08b')
             value_2_binary = format(value_2, '08b')
             results = ''
-            for i in range(7):
-                if value_1_binary[i] == 1 and value_2_binary[i] == 1:
+            for i in range(8):
+                if value_1_binary[i] == '1' and value_2_binary[i] == '1':
                     results += '1'
                 else:
                     results += '0'
@@ -88,8 +91,8 @@ class CPU:
             value_1_binary = format(value_1, '08b')
             value_2_binary = format(value_2, '08b')
             results = ''
-            for i in range(7):
-                if value_1_binary == 1 or value_2_binary == 1:
+            for i in range(8):
+                if value_1_binary[i] == '1' or value_2_binary[i] == '1':
                     results += '1'
                 else:
                     results += '0'
@@ -100,10 +103,10 @@ class CPU:
             value_1_binary = format(value_1, '08b')
             value_2_binary = format(value_2, '08b')
             results = ''
-            for i in range(7):
-                if value_1_binary == 1 or value_2_binary == 1:
-                    if value_1_binary == 1 and value_2_binary == 1:
-                        continue
+            for i in range(8):
+                if value_1_binary[i] == '1' or value_2_binary[i] == '1':
+                    if value_1_binary[i] == '1' and value_2_binary[i] == '1':
+                        results += '0'
                     else:
                         results += '1'
                 else:
@@ -112,10 +115,9 @@ class CPU:
 
         elif op == "NOT":
             value_1_binary = format(value_1, '08b')
-            value_2_binary = format(value_2, '08b')
             results = ''
-            for i in range(7):
-                if value_1_binary[i] == 1 and value_2_binary[i] == 1:
+            for i in range(8):
+                if value_1_binary[i] == '1':
                     results += '0'
                 else:
                     results += '1'
@@ -123,10 +125,28 @@ class CPU:
             self.reg[op_1] = int(results, 2)
 
         elif op == "SHR":
-            self.reg[op_1] = bin(value_1 >> value_2)
+            value_1_binary = format(value_1, '08b')
+            results_left = ''
+            results_right = ''
+            for i in range(8):
+                if i < value_2:
+                    results_left += '0'
+                else:
+                    results_right += value_1_binary[i-value_2]
+
+            self.reg[op_1] = int((results_left + results_right), 2)
 
         elif op == "SHL":
-            self.reg[op_1] = bin(value_1 << value_2)
+            value_1_binary = format(value_1, '08b')
+            results_left = ''
+            results_right = ''
+            for i in range(8):
+                if i < value_2:
+                    results_left += '0'
+                else:
+                    results_right += value_1_binary[i]
+
+            self.reg[op_1] = int((results_right + results_left), 2)
 
         elif op == "JMP":
             self.pc = value_1
@@ -245,5 +265,9 @@ class CPU:
                 self.pc += 3
 
             elif command == NOT:
-                self.alu("NOT", self.ram[self.pc + 1], self.ram[self.pc + 2])
+                self.alu("NOT", self.ram[self.pc + 1], None)
+                self.pc += 2
+
+            elif command == MOD:
+                self.alu("MOD", self.ram[self.pc + 1], None)
                 self.pc += 3

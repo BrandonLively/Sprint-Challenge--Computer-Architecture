@@ -8,7 +8,7 @@ from cpu import *
 
 basedir = os.path.abspath(os.getcwd())
 
-filename = "sctest.ls8"
+filename = "scstretch.ls8"
 
 filepath = os.path.join(basedir, filename)
 
