@@ -53,55 +53,97 @@ class CPU:
             print("File not Found")
             sys.exit(2)
 
-    def alu(self, op, reg_a, reg_b):
+    def alu(self, op, op_1, op_2):
         """ALU operations."""
 
+        value_1 = self.reg[op_1]
+        if op_2 is not None:
+            value_2 = self.reg[op_2]
+
         if op == "ADD":
-            self.reg[reg_a] += self.reg[reg_b]
+            value_1 += value_2
 
         elif op == "SUB":
-            self.reg[reg_a] -= self.reg[reg_b]
+            value_1 -= value_2
 
         elif op == "MUL":
-            self.reg[reg_a] *= self.reg[reg_b]
+            value_1 *= value_2
 
         elif op == "DIV":
-            self.reg[reg_a] /= self.reg[reg_b]
+            value_1 /= value_2
 
         elif op == "AND":
-            pass
+            value_1_binary = format(value_1, '08b')
+            value_2_binary = format(value_2, '08b')
+            results = ''
+            for i in range(7):
+                if value_1_binary[i] == 1 and value_2_binary[i] == 1:
+                    results += '1'
+                else:
+                    results += '0'
+
+            self.reg[op_1] = int(results, 2)
 
         elif op == "OR":
-            pass
+            value_1_binary = format(value_1, '08b')
+            value_2_binary = format(value_2, '08b')
+            results = ''
+            for i in range(7):
+                if value_1_binary == 1 or value_2_binary == 1:
+                    results += '1'
+                else:
+                    results += '0'
+
+            self.reg[op_1] = int(results, 2)
 
         elif op == "XOR":
-            pass
+            value_1_binary = format(value_1, '08b')
+            value_2_binary = format(value_2, '08b')
+            results = ''
+            for i in range(7):
+                if value_1_binary == 1 or value_2_binary == 1:
+                    if value_1_binary == 1 and value_2_binary == 1:
+                        continue
+                    else:
+                        results += '1'
+                else:
+                    results += '0'
+            self.reg[op_1] = int(results, 2)
 
         elif op == "NOT":
-            pass
+            value_1_binary = format(value_1, '08b')
+            value_2_binary = format(value_2, '08b')
+            results = ''
+            for i in range(7):
+                if value_1_binary[i] == 1 and value_2_binary[i] == 1:
+                    results += '0'
+                else:
+                    results += '1'
+
+            self.reg[op_1] = int(results, 2)
 
         elif op == "SHR":
-            pass
+            self.reg[op_1] = bin(value_1 >> value_2)
 
         elif op == "SHL":
-            pass
+            self.reg[op_1] = bin(value_1 << value_2)
 
         elif op == "JMP":
-            self.pc = self.reg[reg_a]
+            self.pc = value_1
 
         elif op == "CMP":
-            if self.reg[reg_a] == self.reg[reg_b]:
+            if value_1 == value_2:
                 self.equal_flag = True
 
         elif op == "JNE":
             if self.equal_flag is not True:
-                self.pc = self.reg[reg_a]
+                self.pc = value_1
             else:
                 self.pc += 2
 
         elif op == "JEQ":
             if self.equal_flag is True:
-                self.pc = self.reg[reg_a]
+                self.pc = value_1
             else:
                 self.pc += 2
 
